@@ -13,6 +13,7 @@ contract NFTMarket is ReentrancyGuard {
     struct Listing {
         address seller;
         uint256 price;
+        uint256 listingTime;
     }
 
     mapping(address => EnumerableSet.UintSet) private nftContractTokens;
@@ -36,7 +37,7 @@ contract NFTMarket is ReentrancyGuard {
         require(nftContract.ownerOf(_tokenId) == msg.sender, "Not the owner of this NFT");
         require(nftContract.getApproved(_tokenId) == address(this), "Contract is not approved");
 
-        listings[_nftContract][_tokenId] = Listing(msg.sender, _price);
+        listings[_nftContract][_tokenId] = Listing(msg.sender, _price, block.timestamp);
         nftContractTokens[_nftContract].add(_tokenId);
         listedContractAddresses.add(_nftContract);
 
@@ -81,7 +82,8 @@ contract NFTMarket is ReentrancyGuard {
         address[] memory nftContracts,
         uint256[] memory tokenIds,
         address[] memory sellers,
-        uint256[] memory prices
+        uint256[] memory prices,
+        uint256[] memory listingTimes
     ) {
         uint256 totalListed = getTotalListedNFTs();
         uint256 resultLength = (start + limit > totalListed) ? totalListed - start : limit;
@@ -90,6 +92,7 @@ contract NFTMarket is ReentrancyGuard {
         tokenIds = new uint256[](resultLength);
         sellers = new address[](resultLength);
         prices = new uint256[](resultLength);
+        listingTimes = new uint256[](resultLength);
 
         uint256 currentIndex = 0;
         uint256 listedCount = 0;
@@ -106,6 +109,7 @@ contract NFTMarket is ReentrancyGuard {
                     tokenIds[currentIndex] = tokenId;
                     sellers[currentIndex] = listing.seller;
                     prices[currentIndex] = listing.price;
+                    listingTimes[currentIndex] = listing.listingTime;
                     currentIndex++;
                 }
                 listedCount++;

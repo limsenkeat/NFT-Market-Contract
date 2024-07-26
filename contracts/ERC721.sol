@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract MomBirds is ERC721, Ownable {
+contract MomBirds is ERC721Enumerable, Ownable {
     
     uint256 public constant MAX_SUPPLY = 10000;
     uint256 public totalMinted = 0;
